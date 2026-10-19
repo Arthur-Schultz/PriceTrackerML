@@ -1,14 +1,27 @@
 version: '3.8'
 
 services:
+  scraper:
+    build: ./scraper
+    container_name: ml_scraper
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+
   n8n:
     image: docker.n8n.io/n8nio/n8n
     container_name: n8n_tracker
     restart: unless-stopped
     ports:
       - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
     volumes:
       - n8n_data:/home/node/.n8n
+    depends_on:
+      - scraper
 
 volumes:
   n8n_data:
